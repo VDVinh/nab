@@ -1,0 +1,24 @@
+{
+  "name": "e2etests",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Vo Duy Vinh <vinh.vo@2359media.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/e2eTests.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "mocha __tests__ --recursive"
+  },
+  "dependencies": {
+    "chai": "^4.3.0",
+    "mocha": "^8.2.1",
+    "supertest": "^6.1.3"
+  }
+}

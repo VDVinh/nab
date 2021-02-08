@@ -1,0 +1,29 @@
+{
+  "name": "productBFF",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test nyc mocha --timeout=3000 \"test/**/*.spec.js\" --exit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.6",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "grpc": "^1.24.4",
+    "grpc-kit": "^0.2.0",
+    "grpc-promise": "^1.4.0",
+    "redis": "^3.0.2",
+    "sinon": "^9.2.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "grpc-mock": "^0.7.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
+    "supertest": "^6.1.3"
+  }
+}

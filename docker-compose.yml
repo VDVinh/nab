@@ -1,0 +1,116 @@
+version: '3'
+services:
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: "redis-server --requirepass ${REDIS_PASSWORD}"
+
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    container_name: elasticsearch
+    restart: always
+    environment:
+      - "discovery.type=single-node"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  mysql:
+    container_name: mysql
+    image: mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER:  "${DB_USERNAME}"
+
+  product-db:
+    container_name: product-db
+    image: product-db:latest
+    depends_on:
+      - mysql
+    command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm start'
+    build:
+      context: ./packages/productDB
+    volumes:
+      - ./packages/protoFiles/products:/code/protoFiles
+      - ./certs:/code/certs
+      - ./wait-for:/wait-for
+    ports:
+      - "55555:55555"
+    environment:
+      GRPC_SERVER_PORT: 55555
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_NAME: "${DB_NAME}"
+      DB_USERNAME:  "${DB_USERNAME}"
+      DB_HOST: mysql
+      GRPC_SSL_ENABLE: "true"
+
+  migration:
+    container_name: migration
+    image: product-db:latest
+    command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm run migration'
+    volumes:
+      - ./wait-for:/wait-for
+    environment:
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_NAME: "${DB_NAME}"
+      DB_USERNAME:  "${DB_USERNAME}"
+      DB_HOST: mysql
+
+
+  product-bff:
+    container_name: product-bff
+    depends_on:
+      - redis
+      - product-db
+    build:
+      context: ./packages/productBFF
+    volumes:
+      - ./packages/protoFiles/products:/code/protoFiles
+      - ./certs:/code/certs
+    ports:
+      - "3000:3000"
+    environment:
+      PRODUCT_STREAM: "${PRODUCT_STREAM}"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      GRPC_SERVER_URI: "product-db:55555"
+      GRPC_SSL_ENABLE: "true"
+
+  analytics:
+    container_name: analytics
+    depends_on:
+      - elasticsearch
+      - redis
+    volumes:
+      - ./wait-for:/wait-for
+    build:
+      context: ./packages/analytics
+    command: sh -c '/wait-for redis:6379 --timeout 90 -- /wait-for elasticsearch:9200 --timeout 90 -- node index.js'
+    environment:
+      PRODUCT_STREAM: "${PRODUCT_STREAM}"
+      CONSUMER_GROUP_NAME: "{CONSUMER_GROUP_NAME}"
+      CONSUMER_NAME: "{CONSUMER_NAME}"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      ELASTIC_SEARCH_URL: "http://elasticsearch:9200"
+
+  e2e-tests:
+    container_name: e2e-tests
+    volumes:
+      - ./wait-for:/wait-for
+      - ./packages/e2e-tests:/code
+    build:
+      context: ./packages/e2e-tests
+    command: sh -c '/wait-for product-bff:3000 -- /wait-for elasticsearch:9200 --timeout 90 -- npm run test'
+    environment:
+      PRODUCT_BFF_URL: product-bff:3000
+      ELASTIC_SEARCH_URL: elasticsearch:9200

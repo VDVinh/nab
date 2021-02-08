@@ -1,0 +1,4 @@
+node_modules/
+packages/product-BFF/node_modules/
+packages/product-DB/node_modules/
+packages/analytics/node_modules/
