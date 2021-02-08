@@ -19,17 +19,17 @@
 * Run on local pc:
 
 ```
-docker-compose --env-file ./config/.env.dev up
+docker-compose --env-file ./config/.env.dev up --build -d
 ```
 * Can run the DB migration and seeds separately by:
 
 ```
-docker-compose --env-file ./config/.env.dev up migration
+docker-compose --env-file ./config/.env.dev up migration -d
 ```
 * Run the end-to-end test by:  
 
 ```
-docker-compose --env-file ./config/.env.dev up e2e-tests
+docker-compose --env-file ./config/.env.dev up e2e-tests -d
 ```
 * Call API: 
 
