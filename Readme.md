@@ -11,8 +11,26 @@
                              (message)
 ```
 
+* Source code of each service has following structure:
+├── Dockerfile
+├── controllers/
+├── entities/
+├── frameworks/
+├── index.js
+├── interactors/
+├── package-lock.json
+├── package.json
+├── repositories/
+├── test/
+├── utilities/
+└── wait
+
 * The `unit tests` are located in folder `/test` of each service. The purpose of these unit tests is mainly for writing the source codes (TDD style).
-* Each service is designed to have minimal business logics. Those logics are put inside the `entities` and `interactors` folders. `controllers` and `reposistories` store the adapters to frameworks like: `express`, `mysql`, `elasticsearch`. The architecture design trying to achieve the concepts of the `Clean Architecture`.
+* Each service is designed to have minimal business logics. Those logics are put inside the `entities` and `interactors` folders.
+* The folder: `controllers` and `reposistories` store the adapters to frameworks
+* The folder: `frameworks` store all the codes that tightly depends on the frameworks like: `express`, `mysql`, `elasticsearch`.
+* This architecture design trying to achieve the concepts of the `Clean Architecture`.
+
 * Source codes of the services are put in the folder `packages`.
 * The `certs` folder contain the SSL certification for doing secure GRPC calls.
 * Use docker and docker-compose to run the services and wire them up for end-to-end tests.
