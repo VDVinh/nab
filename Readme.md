@@ -8,7 +8,7 @@
   Request --------> Product-BFF --------> Product-DB ------> MySQL
                          |
                          ---------------> analytics  ------> ElasticSearch
-                          (message)
+                             (message)
 ```
 
 * The `unit tests` are located in folder `/test` of each service. The purpose of these unit tests is mainly for writing the source codes (TDD style).
@@ -16,8 +16,12 @@
 * Source codes of the services are put in the folder `packages`.
 * The `certs` folder contain the SSL certification for doing secure GRPC calls.
 * Use docker and docker-compose to run the services and wire them up for end-to-end tests.
-* Run on local pc: `docker-compose --env-file ./config/.env.dev up`
-* Can run the DB migration and seeds separately by: `docker-compose --env-file ./config/.env.dev up migration`
-* Run the end-to-end test by:  `docker-compose --env-file ./config/.env.dev up e2e-tests`
-* Call API: `curl http://localhost:3000/products?page=1&perPage=10`
+* Run on local pc:
+```docker-compose --env-file ./config/.env.dev up```
+* Can run the DB migration and seeds separately by:
+```docker-compose --env-file ./config/.env.dev up migration```
+* Run the end-to-end test by:  
+```docker-compose --env-file ./config/.env.dev up e2e-tests```
+* Call API: 
+```curl http://localhost:3000/products?page=1&perPage=10```
 * Sorry, only the `Get Products API` is available. This API includes the pagination.
