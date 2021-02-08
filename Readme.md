@@ -4,7 +4,7 @@
 * The `Product-BFF` serves the REST APIs. The `Product-BFF` use `grpc` to send and receive response from `Product-DB`. The `Product-BFF` send asynchronous messages to the `analytics` using `Redis Stream` (kind of message broker).
 
 ```
-               (REST)                    (grpc)
+            (REST)                (grpc)
   Request --------> Product-BFF --------> Product-DB ------> MySQL
                          |
                          ---------------> analytics  ------> ElasticSearch
