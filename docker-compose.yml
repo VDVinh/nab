@@ -107,7 +107,6 @@ services:
     container_name: e2e-tests
     volumes:
       - ./wait-for:/wait-for
-      - ./packages/e2e-tests:/code
     build:
       context: ./packages/e2e-tests
     command: sh -c '/wait-for product-bff:3000 -- /wait-for elasticsearch:9200 --timeout 90 -- npm run test'
