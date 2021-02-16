@@ -13,11 +13,16 @@ const options = {
   oneofs: true
 };
 
-const credentials = grpc.credentials.createSsl(
-  fs.readFileSync('./certs/ca.crt'),
-  fs.readFileSync('./certs/client.key'),
-  fs.readFileSync('./certs/client.crt')
-);
+let credentials;
+if (process.env.GRPC_SSL_ENABLE) {
+  credentials = grpc.credentials.createSsl(
+    fs.readFileSync('./certs/ca.crt'),
+    fs.readFileSync('./certs/client.key'),
+    fs.readFileSync('./certs/client.crt')
+  );
+} else {
+  credentials = grpc.credentials.createInsecure();
+}
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, options);
 const { ProductService } = grpc.loadPackageDefinition(
   packageDefinition

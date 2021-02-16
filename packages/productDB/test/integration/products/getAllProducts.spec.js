@@ -1,4 +1,5 @@
 process.env.GRPC_SERVER_PORT = '44044';
+process.env.GRPC_SSL_ENABLE = true;
 
 const { expect } = require('chai');
 const pick = require('../../../utilities/pick');
@@ -7,11 +8,11 @@ const { Product } = require('../../../frameworks/sequelize/models');
 const fakeProductsList = require('../../../frameworks/faker/fakeProductsList');
 const stopServer = require('../../../index');
 
-const serverURI = 'localhost:44044';
+const serverURI = `localhost:${process.env.GRPC_SERVER_PORT}`;
 
 const client = makeClient({ serverURI });
 let products;
-describe('Product Service: GetAll', () => {
+describe('Integration Test: Product Service: GetAll', () => {
   before(async () => {
     products = fakeProductsList(2);
     await Product.bulkCreate(products);
