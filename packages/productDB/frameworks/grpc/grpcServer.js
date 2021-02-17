@@ -4,6 +4,7 @@ const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader');
 
 const PROTO_PATH = path.join(__dirname, '../../protoFiles/product.proto');
+const { CA_CERT_FILE, SERVER_KEY_FILE, SERVER_CERT_FILE } = process.env;
 
 const options = {
   keepCase: true,
@@ -14,13 +15,13 @@ const options = {
 };
 
 let credentials;
-if (process.env.GRPC_SSL_ENABLE) {
+if (process.env.GRPC_SSL_STATUS === 'enabled') {
   credentials = grpc.ServerCredentials.createSsl(
-    fs.readFileSync('./certs/ca.crt'),
+    fs.readFileSync(CA_CERT_FILE),
     [
       {
-        private_key: fs.readFileSync('./certs/server.key'),
-        cert_chain: fs.readFileSync('./certs/server.crt')
+        private_key: fs.readFileSync(SERVER_KEY_FILE),
+        cert_chain: fs.readFileSync(SERVER_CERT_FILE)
       }
     ],
     true

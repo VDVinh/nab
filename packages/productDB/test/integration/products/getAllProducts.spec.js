@@ -1,5 +1,5 @@
 process.env.GRPC_SERVER_PORT = '44044';
-process.env.GRPC_SSL_ENABLE = true;
+process.env.GRPC_SSL_STATUS = 'enabled';
 
 const { expect } = require('chai');
 const pick = require('../../../utilities/pick');

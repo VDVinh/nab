@@ -3,6 +3,8 @@ const path = require('path');
 const protoLoader = require('@grpc/proto-loader');
 const grpc = require('grpc');
 
+const { CA_CERT_FILE, CLIENT_KEY_FILE, CLIENT_CERT_FILE } = process.env;
+
 const PROTO_PATH = path.join(__dirname, '../../protoFiles/product.proto');
 
 const options = {
@@ -15,11 +17,11 @@ const options = {
 
 let credentials;
 let grpcOptions;
-if (process.env.GRPC_SSL_ENABLE) {
+if (process.env.GRPC_SSL_STATUS === 'enabled') {
   credentials = grpc.credentials.createSsl(
-    fs.readFileSync('./certs/ca.crt'),
-    fs.readFileSync('./certs/client.key'),
-    fs.readFileSync('./certs/client.crt')
+    fs.readFileSync(CA_CERT_FILE),
+    fs.readFileSync(CLIENT_KEY_FILE),
+    fs.readFileSync(CLIENT_CERT_FILE)
   );
   grpcOptions = {
     'grpc.ssl_target_name_override': 'localhost',

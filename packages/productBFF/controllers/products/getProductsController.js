@@ -1,3 +1,5 @@
+const DEFAULT_PAGE = 1;
+const DEFAULT_PER_PAGE = 10;
 const makeGetProductsController = ({ logActivity }) => ({ getProducts }) => {
   const getProductsController = async (req = { query: {} }) => {
     try {
@@ -8,10 +10,10 @@ const makeGetProductsController = ({ logActivity }) => ({ getProducts }) => {
       console.error(e.stack);
     }
     try {
-      const { page = 1, perPage = 10 } = req.query;
+      const { page, perPage } = req.query;
       const products = await getProducts({
-        page: parseInt(page, 10),
-        perPage: parseInt(perPage, 10)
+        page: parseInt(page, 10) || DEFAULT_PAGE,
+        perPage: parseInt(perPage, 10) || DEFAULT_PER_PAGE
       });
       return {
         data: products || [],

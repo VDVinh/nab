@@ -14,7 +14,7 @@ const options = {
 };
 
 let credentials;
-if (process.env.GRPC_SSL_ENABLE) {
+if (process.env.GRPC_SSL_STATUS === 'enabled') {
   credentials = grpc.credentials.createSsl(
     fs.readFileSync('./certs/ca.crt'),
     fs.readFileSync('./certs/client.key'),
