@@ -1,8 +1,9 @@
 FROM node:14.15.4-alpine3.12
 WORKDIR /code
-ENV ELASTIC_SEARCH_URL=http://elasticsearch:9200
-COPY package*.json ./
-RUN npm install
-COPY . .
+RUN chown -R node:node /code
+USER node
+COPY --chown=node:node package*.json ./
+RUN npm ci --only=production
+COPY --chown=node:node . .
 CMD [ "node", "index.js" ]
 

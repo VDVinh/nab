@@ -4,5 +4,3 @@ npm-debug.log
 Dockerfile
 Dockerfile.prod
 .nyc_output
-certs
-protoFiles

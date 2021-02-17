@@ -1,12 +1,16 @@
-version: '3'
+version: '3.9'
 services:
   redis:
     container_name: redis
     image: redis:alpine
     restart: always
+    secrets:
+      - redis_password
+    environment:
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
     ports:
       - "6379:6379"
-    command: "redis-server --requirepass ${REDIS_PASSWORD}"
+    command: ["sh", "-c", "redis-server --requirepass \"$$(cat /run/secrets/redis_password)\""]
 
   elasticsearch:
     image: elasticsearch:7.10.1
@@ -24,8 +28,10 @@ services:
     ports:
       - "3306:3306"
     restart: always
+    secrets:
+      - db_password
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_password
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER:  "${DB_USERNAME}"
 
@@ -43,9 +49,11 @@ services:
       - ./wait-for:/wait-for
     ports:
       - "55555:55555"
+    secrets:
+      - db_password
     environment:
       GRPC_SERVER_PORT: 55555
-      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_PASSWORD_FILE: /run/secrets/db_password
       DB_NAME: "${DB_NAME}"
       DB_USERNAME:  "${DB_USERNAME}"
       DB_HOST: mysql
@@ -57,8 +65,12 @@ services:
     command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm run migration'
     volumes:
       - ./wait-for:/wait-for
+    secrets:
+      - db_password
+    depends_on:
+      - mysql
     environment:
-      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_PASSWORD_FILE: /run/secrets/db_password
       DB_NAME: "${DB_NAME}"
       DB_USERNAME:  "${DB_USERNAME}"
       DB_HOST: mysql
@@ -76,11 +88,13 @@ services:
       - ./certs:/code/certs
     ports:
       - "3000:3000"
+    secrets:
+      - redis_password
     environment:
       PRODUCT_STREAM: "${PRODUCT_STREAM}"
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
       GRPC_SERVER_URI: "product-db:55555"
       GRPC_SSL_ENABLE: "true"
 
@@ -96,12 +110,14 @@ services:
     command: sh -c '/wait-for redis:6379 --timeout 90 -- /wait-for elasticsearch:9200 --timeout 90 -- node index.js'
     environment:
       PRODUCT_STREAM: "${PRODUCT_STREAM}"
-      CONSUMER_GROUP_NAME: "{CONSUMER_GROUP_NAME}"
-      CONSUMER_NAME: "{CONSUMER_NAME}"
+      CONSUMER_GROUP_NAME: "${CONSUMER_GROUP_NAME}"
+      CONSUMER_NAME: "${CONSUMER_NAME}"
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ELASTIC_SEARCH_URL: "http://elasticsearch:9200"
+    secrets:
+      - redis_password
 
   e2e-tests:
     container_name: e2e-tests
@@ -109,7 +125,12 @@ services:
       - ./wait-for:/wait-for
     build:
       context: ./packages/e2e-tests
-    command: sh -c '/wait-for product-bff:3000 -- /wait-for elasticsearch:9200 --timeout 90 -- npm run test'
+    command: sh -c '/wait-for product-bff:3000 -- /wait-for elasticsearch:9200 --timeout 120 -- npm run test'
     environment:
       PRODUCT_BFF_URL: product-bff:3000
       ELASTIC_SEARCH_URL: elasticsearch:9200
+secrets:
+  db_password:
+    file: 'secrets/db_password.txt'
+  redis_password:
+    file: 'secrets/redis_password.txt'

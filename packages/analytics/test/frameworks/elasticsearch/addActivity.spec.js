@@ -1,8 +1,8 @@
 const { expect } = require('chai');
-const makeESClient = require('../../../frameworks/elasticsearch/client');
+const makeELasticSearchClient = require('../../../frameworks/elasticsearch/client');
 const loadConfigs = require('../../../frameworks/elasticsearch/configs');
 
-const { searchBy, removeAllDocuments, addActivity } = makeESClient(
+const { searchBy, removeAllDocuments, addActivity } = makeELasticSearchClient(
   loadConfigs()
 );
 const fakeActivity = require('../faker/fakeActivity');
