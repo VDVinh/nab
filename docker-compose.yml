@@ -17,7 +17,7 @@ services:
     container_name: elasticsearch
     restart: always
     environment:
-      - "discovery.type=single-node"
+      "discovery.type": single-node
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -51,13 +51,19 @@ services:
       - "55555:55555"
     secrets:
       - db_password
+      - ca_cert
+      - server_key
+      - server_cert
     environment:
       GRPC_SERVER_PORT: 55555
       DB_PASSWORD_FILE: /run/secrets/db_password
+      CA_CERT_FILE: /run/secrets/ca_cert
+      SERVER_KEY_FILE: /run/secrets/server_key
+      SERVER_CERT_FILE: /run/secrets/server_cert
       DB_NAME: "${DB_NAME}"
       DB_USERNAME:  "${DB_USERNAME}"
       DB_HOST: mysql
-      GRPC_SSL_ENABLE: "true"
+      GRPC_SSL_STATUS: "enabled"
 
   migration:
     container_name: migration
@@ -89,14 +95,20 @@ services:
     ports:
       - "3000:3000"
     secrets:
+      - ca_cert
+      - client_key
+      - client_cert
       - redis_password
     environment:
+      CA_CERT_FILE: /run/secrets/ca_cert
+      CLIENT_KEY_FILE: /run/secrets/client_key
+      CLIENT_CERT_FILE: /run/secrets/client_cert
       PRODUCT_STREAM: "${PRODUCT_STREAM}"
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
       GRPC_SERVER_URI: "product-db:55555"
-      GRPC_SSL_ENABLE: "true"
+      GRPC_SSL_STATUS: "enabled"
 
   analytics:
     container_name: analytics
@@ -134,3 +146,13 @@ secrets:
     file: 'secrets/db_password.txt'
   redis_password:
     file: 'secrets/redis_password.txt'
+  ca_cert:
+    file: 'secrets/certs/ca.crt'
+  server_key:
+    file: 'secrets/certs/server.key'
+  server_cert:
+    file: 'secrets/certs/server.crt'
+  client_key:
+    file: 'secrets/certs/client.key'
+  client_cert:
+    file: 'secrets/certs/client.crt'
