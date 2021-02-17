@@ -22,10 +22,13 @@ const readFromStream = makeReadFromStream({
 });
 
 const pushDataToStream = (numberOfItems) =>
-  [...Array(numberOfItems)].map((_, i) => addToStream({ item: i + 1 }));
+  Promise.all(
+    [...Array(numberOfItems)].map((_, i) => addToStream({ item: i + 1 }))
+  );
 
 const TOTAL_NUMBER_OF_ITEMS = 100;
 describe('readFromStream', () => {
+  before(trimProductStream);
   beforeEach(async () => {
     await client.createGroupForProductStream();
     await pushDataToStream(TOTAL_NUMBER_OF_ITEMS);
@@ -43,6 +46,20 @@ describe('readFromStream', () => {
     });
 
     expect(remaining[0][1].length).to.equal(TOTAL_NUMBER_OF_ITEMS - READ_COUNT);
+  });
+
+  it('can read pending events from stream', async () => {
+    const PENDING_COUNT = 5;
+    const READ_COUNT = 20;
+    await readNewEntriesByConsumer({ count: PENDING_COUNT });
+    await readFromStream({ count: READ_COUNT });
+    const remaining = await readNewEntriesByAnotherConsumer({
+      count: TOTAL_NUMBER_OF_ITEMS
+    });
+
+    expect(remaining[0][1].length).to.equal(
+      TOTAL_NUMBER_OF_ITEMS - PENDING_COUNT
+    );
   });
 
   it('should process data from pending stream first', async () => {
