@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha --timeout=3000 test/**/*.spec.js integrationTest/**/*.js --exit"
+    "test": "nyc mocha --timeout=3000 test/**/*.spec.js --exit",
+    "integration-test": "nyc mocha --timeout=3000 integrationTest/**/*.js --exit"
   },
   "keywords": [],
   "author": "",

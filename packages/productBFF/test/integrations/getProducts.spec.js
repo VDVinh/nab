@@ -1,3 +1,4 @@
+process.env.GRPC_SERVER_URI = '0.0.0.0:50051';
 const { expect } = require('chai');
 const request = require('supertest');
 const { initServer } = require('../../frameworks/express/routes');
@@ -7,14 +8,12 @@ const {
   mockGetAllResponse
 } = require('../frameworks/grpc/grpcProductsMockServer');
 
-const serverURI = '0.0.0.0:50051';
-
 const mockServer = makeMockProductsServer();
 const app = initServer();
 
 describe('GET /products', () => {
   before((done) => {
-    mockServer.listen(serverURI);
+    mockServer.listen(process.env.GRPC_SERVER_URI);
     done();
   });
   after(() => mockServer.close(true));

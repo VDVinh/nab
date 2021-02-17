@@ -3,7 +3,7 @@ const makeGetProductsRepository = require('./getProductsGrpcRepository');
 
 const makeGrpcClient = require('../../frameworks/grpc/grpcClient');
 
-const serverURI = process.env.GRPC_SERVER_URI || '0.0.0.0:50051';
+const serverURI = process.env.GRPC_SERVER_URI;
 
 const grpcClient = makeGrpcClient({
   protoPath: path.join(__dirname, '../../protoFiles/product.proto'),

@@ -3,7 +3,10 @@ const fakeProductsList = require('../../../../frameworks/faker/fakeProductsList'
 const { Product } = require('../../../../frameworks/sequelize/models');
 
 describe('sequelize Product model', () => {
-  beforeEach(() => Product.bulkCreate(fakeProductsList(2)));
+  beforeEach(async () => {
+    await Product.destroy({ truncate: true });
+    await Product.bulkCreate(fakeProductsList(2));
+  });
   afterEach(() => Product.destroy({ truncate: true }));
 
   it('can load products from MySql', async () => {

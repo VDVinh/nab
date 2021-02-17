@@ -7,6 +7,4 @@ process.on('uncaughtException', (err, origin) => {
   process.exit(1);
 });
 
-console.log('GRPC_SERVER_URI', process.env.GRPC_SERVER_URI);
-
 runServer({ port });

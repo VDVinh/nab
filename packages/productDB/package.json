@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha \"test/**/*.spec.js\"",
-    "start": "node index.js",
-    "migration": "npx sequelize db:migrate && npx sequelize db:seed:all"
+    "test": "npx sequelize db:migrate && nyc mocha \"test/**/*.spec.js\" --exit",
+    "start": "npx sequelize db:migrate && node index.js",
+    "seeds": "npx sequelize db:seed:all"
   },
   "keywords": [],
   "author": "",
