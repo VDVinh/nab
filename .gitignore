@@ -4,3 +4,4 @@ packages/product-DB/node_modules/
 packages/analytics/node_modules/
 packages/**/.nyc_output/
 packages/**/certs/
+secrets
