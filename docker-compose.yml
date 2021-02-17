@@ -37,15 +37,16 @@ services:
 
   product-db:
     container_name: product-db
-    image: product-db:latest
+    image: "product-db:${BUILD_TARGET}"
     depends_on:
       - mysql
     command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm start'
     build:
       context: ./packages/productDB
+      target: "${BUILD_TARGET}"
     volumes:
       - ./packages/protoFiles/products:/code/protoFiles
-      - ./certs:/code/certs
+      - ./secrets/certs:/code/certs
       - ./wait-for:/wait-for
     ports:
       - "55555:55555"
@@ -63,12 +64,12 @@ services:
       DB_NAME: "${DB_NAME}"
       DB_USERNAME:  "${DB_USERNAME}"
       DB_HOST: mysql
-      GRPC_SSL_STATUS: "enabled"
+      GRPC_SSL_STATUS: "${GRPC_SSL_STATUS}"
 
-  migration:
-    container_name: migration
-    image: product-db:latest
-    command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm run migration'
+  seeds:
+    container_name: seeds
+    image: "product-db"
+    command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm run seeds'
     volumes:
       - ./wait-for:/wait-for
     secrets:
@@ -89,9 +90,11 @@ services:
       - product-db
     build:
       context: ./packages/productBFF
+      target: "${BUILD_TARGET}"
+    image: "product-bff:${BUILD_TARGET}"
     volumes:
       - ./packages/protoFiles/products:/code/protoFiles
-      - ./certs:/code/certs
+      - ./secrets/certs:/code/certs
     ports:
       - "3000:3000"
     secrets:
@@ -108,7 +111,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
       GRPC_SERVER_URI: "product-db:55555"
-      GRPC_SSL_STATUS: "enabled"
+      GRPC_SSL_STATUS: "${GRPC_SSL_STATUS}"
 
   analytics:
     container_name: analytics
@@ -117,8 +120,10 @@ services:
       - redis
     volumes:
       - ./wait-for:/wait-for
+    image: "analytics:${BUILD_TARGET}"
     build:
       context: ./packages/analytics
+      target: "${BUILD_TARGET}"
     command: sh -c '/wait-for redis:6379 --timeout 90 -- /wait-for elasticsearch:9200 --timeout 90 -- node index.js'
     environment:
       PRODUCT_STREAM: "${PRODUCT_STREAM}"
