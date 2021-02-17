@@ -45,6 +45,8 @@ services:
       context: ./packages/productDB
       target: "${BUILD_TARGET}"
     volumes:
+      - ./packages/productDB:/code
+      - /code/node_modules/
       - ./packages/protoFiles/products:/code/protoFiles
       - ./secrets/certs:/code/certs
       - ./wait-for:/wait-for
@@ -93,6 +95,8 @@ services:
       target: "${BUILD_TARGET}"
     image: "product-bff:${BUILD_TARGET}"
     volumes:
+      - ./packages/productBFF:/code
+      - /code/node_modules/
       - ./packages/protoFiles/products:/code/protoFiles
       - ./secrets/certs:/code/certs
     ports:
@@ -119,6 +123,8 @@ services:
       - elasticsearch
       - redis
     volumes:
+      - ./packages/analytics:/code
+      - /code/node_modules/
       - ./wait-for:/wait-for
     image: "analytics:${BUILD_TARGET}"
     build:
@@ -139,6 +145,8 @@ services:
   e2e-tests:
     container_name: e2e-tests
     volumes:
+      - ./packages/e2e-tests:/code
+      - /code/node_modules/
       - ./wait-for:/wait-for
     build:
       context: ./packages/e2e-tests

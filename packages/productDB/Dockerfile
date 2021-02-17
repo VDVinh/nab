@@ -6,8 +6,6 @@ COPY --chown=node:node package*.json ./
 
 FROM base as test
 RUN npm ci
-COPY --chown=node:node . .
 
 FROM base as production
 RUN npm ci --only=production
-COPY --chown=node:node . .
