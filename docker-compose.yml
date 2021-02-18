@@ -47,7 +47,7 @@ services:
     volumes:
       - ./packages/productDB:/code
       - /code/node_modules/
-      - ./packages/protoFiles/products:/code/protoFiles
+      - ./protoFiles/products:/code/protoFiles
       - ./secrets/certs:/code/certs
       - ./wait-for:/wait-for
     ports:
@@ -99,7 +99,7 @@ services:
     volumes:
       - ./packages/productBFF:/code
       - /code/node_modules/
-      - ./packages/protoFiles/products:/code/protoFiles
+      - ./protoFiles/products:/code/protoFiles
       - ./secrets/certs:/code/certs
     ports:
       - "3000:3000"
