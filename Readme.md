@@ -78,9 +78,9 @@
 
   * Call API:
 
-  ```
-  curl http://localhost:3000/products?page=1&perPage=10
-  ```
+    ```
+    curl http://localhost:3000/products?page=1&perPage=10
+    ```
 
   * Build dev environment and run Unit Tests on the services:
 
