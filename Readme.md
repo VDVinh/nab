@@ -1,14 +1,14 @@
 * This application is divided into layers in order to isolate the frameworks (like: `sequelize`, `express`, `elasticsearch`, `redis`, `grpc`, `faker`) from the main logics.
 * This isolation makes the application become pluggable and we can do isolated tests.
 * There are totally 4 services: `Product-BFF`, `Product-DB`, `analytics`, `e2e-tests`.
-  1.  The user request will come to the `Product-BFF` processes, forwards to `Product-DB`, and send the response back to the user.
+  1.  The user request will come to the `Product-BFF` that processes, forwards to `Product-DB`, and send the response back to the user.
   2.  The `Product-DB` do 2 jobs:
-    * Make the database query and response the json to the `Product-BFF`.
+    * Make the database query and response the data in json format to the `Product-BFF`.
     * Push the message to the Redis Stream.
   3. The `analytics` consumes the messages on the Redis Stream and do 2 jobs:
     * Indexing the user activity into the `elasticsearch`.
     * Mark the message as processed (ack).
-  4. The `e2e-tests` just do the end-to-end tests. This will make requests to `Product-BFF`, test the responses and test the elasticsearch indexing.
+  4. The `e2e-tests` just do the end-to-end tests. This will make requests to `Product-BFF`, test the responses and test the `elasticsearch` indexing.
 
 * The `Product-BFF` serves the REST APIs. The `Product-BFF` use `grpc` to send and receive response from `Product-DB`. The `Product-BFF` send asynchronous messages to the `analytics` using `Redis Stream` (kind of message broker).
 
@@ -38,7 +38,7 @@
 * The `unit tests` are located in folder `/test` of each service. The purpose of these unit tests is mainly for writing the source codes (TDD style).
 * Each service is designed to have minimal business logics. Those logics are put inside the `entities` and `interactors` folders.
 * The folder: `controllers` and `reposistories` store the adapters to frameworks
-* The folder: `frameworks` store all the codes that tightly depends on the frameworks like: `express`, `mysql`, `elasticsearch`.
+* The folder: `frameworks` store all the codes that tightly depends on the frameworks like: `express`, `mysql`, `elasticsearch`...
 * This architecture design trying to achieve the concepts of the `Clean Architecture`.
 
 * Source codes of the services are put in the folder `packages`.
