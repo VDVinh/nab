@@ -13,7 +13,7 @@ describe('GET /products', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((response) => {
-        expect(response.body.length).to.greaterThanOrEqual(0);
+        expect(response.body.length).to.be.at.least(0);
         done();
       });
   });
