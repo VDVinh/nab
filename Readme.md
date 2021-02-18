@@ -56,7 +56,7 @@
     echo 'my_secret_redis_password' > secrets/redis_password.txt
     ```
 
-  2. run the script gen-cert to generate the certs for GRPC.
+  2. run the script `./gen-cert` to generate the certs for GRPC.
 
   3. Use docker-compose to run all the services:
 
