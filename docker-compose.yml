@@ -70,7 +70,7 @@ services:
 
   seeds:
     container_name: seeds
-    image: "product-db"
+    image: "product-db:${BUILD_TARGET}"
     command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm run seeds'
     volumes:
       - ./wait-for:/wait-for
