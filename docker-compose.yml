@@ -73,6 +73,8 @@ services:
     image: "product-db:${BUILD_TARGET}"
     command: sh -c '/wait-for mysql:3306 --timeout 90 -- npm run seeds'
     volumes:
+      - ./packages/productDB:/code
+      - /code/node_modules/
       - ./wait-for:/wait-for
     secrets:
       - db_password
